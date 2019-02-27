@@ -1,0 +1,55 @@
+{
+  "name": "lisef",
+  "version": "0.0.0",
+  "author": "marcin-slezak @marcin-slezak",
+  "bin": {
+    "lisef": "./bin/run"
+  },
+  "bugs": "https://github.com/marcin-slezak/lisef/issues",
+  "dependencies": {
+    "@oclif/command": "^1.5.10",
+    "@oclif/config": "^1.12.8",
+    "@oclif/plugin-help": "^2.1.6",
+    "chromedriver": "^2.46.0",
+    "lowdb": "^1.0.0",
+    "pm2": "^3.3.1",
+    "selenium-webdriver": "^4.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.21.2",
+    "eslint": "^5.14.1",
+    "eslint-config-oclif": "^3.1.0",
+    "globby": "^8.0.2",
+    "rimraf": "^2.6.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json",
+    "/src"
+  ],
+  "homepage": "https://github.com/marcin-slezak/lisef",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "oclif": {
+    "commands": "./src/commands",
+    "bin": "lisef",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "marcin-slezak/lisef",
+  "scripts": {
+    "postpack": "rimraf oclif.manifest.json",
+    "posttest": "eslint .",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "test": "echo NO TESTS",
+    "version": "oclif-dev readme && git add README.md"
+  }
+}
