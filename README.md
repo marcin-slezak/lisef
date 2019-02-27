@@ -1,6 +1,13 @@
 lisef
 =====
 
+# Installation
+
+Instal lisef  cli globally
+```sh-session
+npm install lisef -g
+```
+
 
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)

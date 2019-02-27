@@ -1,4 +1,4 @@
-const { Builder, WebDriver, Session } = require('selenium-webdriver');
+const { Builder, WebDriver } = require('selenium-webdriver');
 const chromedriverExec = require('chromedriver');
 const chromeDriver = require('selenium-webdriver/chrome');
 const Http = require( 'selenium-webdriver/http');
@@ -11,7 +11,9 @@ const startChromeDriver = () => new Promise((resolve, reject) => {
             return reject(err)
         }
         pm2.start({
-            script: `pm2 start ${chromedriverExec.path} -- --port=65345`,
+            script: `${chromedriverExec.path}`, // -- --port=65345  
+            interpreter: 'none',
+            args: '--port=65345'
         }, function (err, apps) {
             pm2.disconnect();   // Disconnects from PM2
             if (err) {
@@ -53,8 +55,22 @@ const buildDriverUsingSession = (sessionId) => {
     return new WebDriver(sessionId, new Http.Executor(new Http.HttpClient('http://127.0.0.1:65345/')));
 }
 
+const getDriver = async (storage) => {
+    const sessionId = storage.get('settings.sessionId').value()
+    console.log('[getDriver] sessionId from storage', sessionId)
+    if(!sessionId){
+        const driver = await startNewSession()
+        const newSessionId = await getSessionId(driver)
+        storage.set('settings.sessionId', newSessionId).write()
+        console.log('[getDriver] new sessionId generated', newSessionId)
+        return driver;
+    }
+    console.log('[getDriver] used sessionId from storage', sessionId)
+    return buildDriverUsingSession(sessionId)
+}
+
 const getSessionId = async (driver) => {
     return (await driver.getSession()).getId();
 }
 
-module.exports = { startChromeDriver, stopChromeDriver, startNewSession, getSessionId, buildDriverUsingSession }
+module.exports = { startChromeDriver, stopChromeDriver, startNewSession, getSessionId, buildDriverUsingSession, getDriver}

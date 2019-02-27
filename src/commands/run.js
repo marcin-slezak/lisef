@@ -5,9 +5,7 @@ const basename = path.resolve('./');
 const util = require('util')
 const fileExist = util.promisify(fs.exists)
 const storage = require('../services/storage')
-const {buildDriverUsingSession} = require('../services/chromedriver')
-
-
+const {getDriver} = require('../services/chromedriver')
 
 class RunCommand extends Command {
   async run() {
@@ -18,23 +16,24 @@ class RunCommand extends Command {
       return this.log('methodId should be like objectName/methodname')
     }
 
-    const filePath = path.resolve(`./page_objects/${methodId[0]}.js`)
+    const filePath = path.resolve(`./lisef/page_objects/${methodId[0]}.js`)
 
     if (!await fileExist(filePath)) {
       return this.log(`File ${filePath} not found`)
     }
 
-    const driver = buildDriverUsingSession(storage.get('settings.sessionId').value())
-    const pageObject = require(filePath)
-    const pageObjectInstance = new pageObject(driver)
-    if (!pageObjectInstance[methodId[1]]) {
-      return this.log(`Method ${methodId[1]} not found in ${filePath}`);
+    const driver = await getDriver(storage)
+    try{
+      const pageObject = require(filePath)
+      const pageObjectInstance = new pageObject(driver)
+      if (!pageObjectInstance[methodId[1]]) {
+        return this.log(`Method ${methodId[1]} not found in ${filePath}`);
+      }
+  
+      this.log(`Requested function executed, result: ${await pageObjectInstance[methodId[1]]()}`) 
+    }catch(e){
+      this.log('Error when executed page object', e)
     }
-
-    this.log(`Requested function executed, result: ${await pageObjectInstance[methodId[1]]()}`) 
-
-
-
   }
 }
 

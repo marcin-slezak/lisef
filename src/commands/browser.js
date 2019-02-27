@@ -1,5 +1,5 @@
-const {Command, flags} = require('@oclif/command')
-const {startChromeDriver, stopChromeDriver, startNewSession, getSessionId} = require('../services/chromedriver')
+const { Command, flags } = require('@oclif/command')
+const { startChromeDriver, stopChromeDriver, startNewSession, getSessionId } = require('../services/chromedriver')
 const storage = require('../services/storage')
 var path = require('path');
 
@@ -7,25 +7,29 @@ var path = require('path');
 
 class BrowserCommand extends Command {
   async run() {
-    const {args} = this.parse(BrowserCommand)
-    
-    switch(args.operation){
+    const { args } = this.parse(BrowserCommand)
+
+    switch (args.operation) {
       case 'open':
-        this.log('open', await startChromeDriver())
-        const driver = await startNewSession()
-        const sessionId = await getSessionId(driver)
-        console.log('session', sessionId )
-        storage.set('settings.sessionId', sessionId).write()
-      break;
+        try {
+          this.log('open', await startChromeDriver())
+          const driver = await startNewSession()
+          const sessionId = await getSessionId(driver)
+          console.log('session', sessionId)
+          storage.set('settings.sessionId', sessionId).write()
+        } catch (e) {
+          this.log('Error',e )
+        }
+        break;
       case 'close':
         this.log('close', await stopChromeDriver())
-      break;
+        break;
       default:
         this.log(path.resolve('./'))
         this.log(BrowserCommand.description)
-      
+
     }
-    
+
   }
 }
 
@@ -35,7 +39,7 @@ Extra documentation goes here
 `
 
 BrowserCommand.args = [
-  {name: 'operation', required: false},
+  { name: 'operation', required: false },
 
 ]
 module.exports = BrowserCommand
