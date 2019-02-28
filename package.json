@@ -11,6 +11,7 @@
     "@oclif/config": "^1.12.8",
     "@oclif/plugin-help": "^2.1.6",
     "chromedriver": "^2.46.0",
+    "lodash": "^4.17.11",
     "lowdb": "^1.0.0",
     "pm2": "^3.3.1",
     "selenium-webdriver": "^4.0.0-alpha.1"

@@ -24,13 +24,13 @@ class RunCommand extends Command {
 
     const driver = await getDriver(storage)
     try{
-      const pageObject = require(filePath)
-      const pageObjectInstance = new pageObject(driver)
-      if (!pageObjectInstance[methodId[1]]) {
+      const pageObjectClass = require(filePath)
+      const pageObject = new pageObjectClass(driver)
+      if (!pageObject[methodId[1]]) {
         return this.log(`Method ${methodId[1]} not found in ${filePath}`);
       }
   
-      this.log(`Requested function executed, result: ${await pageObjectInstance[methodId[1]]()}`) 
+      this.log(`Requested function executed, result: ${await pageObject[methodId[1]]()}`) 
     }catch(e){
       this.log('Error when executed page object', e)
     }

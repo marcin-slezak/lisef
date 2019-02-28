@@ -63,10 +63,13 @@ const getDriver = async (storage) => {
         const newSessionId = await getSessionId(driver)
         storage.set('settings.sessionId', newSessionId).write()
         console.log('[getDriver] new sessionId generated', newSessionId)
+        await driver.manage().setTimeouts({ implicit: 5000 })
         return driver;
     }
     console.log('[getDriver] used sessionId from storage', sessionId)
-    return buildDriverUsingSession(sessionId)
+    const driver = buildDriverUsingSession(sessionId)
+    await driver.manage().setTimeouts({ implicit: 5000 })
+    return driver
 }
 
 const getSessionId = async (driver) => {
