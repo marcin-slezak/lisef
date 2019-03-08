@@ -5,9 +5,10 @@ const basename = path.resolve('./');
 const storage = require('../services/storage')
 const util = require('util')
 const fileExist = util.promisify(fs.exists)
-const {getDriver} = require('../services/chromedriver')
+const { getDriver } = require('../services/chromedriver')
 const _ = require('lodash')
 const getConfig = require('../services/config')
+const Listr = require('listr');
 
 class SequenceCommand extends Command {
   async run() {
@@ -42,33 +43,34 @@ class SequenceCommand extends Command {
 
         const sequenceClass = require(filePath)
         const sequence = new sequenceClass(driver, ctx)
-    
-        if(!sequence.getSequenceDefinition){
+
+        if (!sequence.getSequenceDefinition) {
           return this.log(`getSequenceDefinition not found in ${filePath}`)
         }
         let lastReturnValue;
         const sequenceDef = sequence.getSequenceDefinition()
         let sequenceToRun;
-        if(flags.start){
+        if (flags.start) {
           const startIndex = sequenceDef.findIndex(i => i === flags.start)
-          if(startIndex < 0){
+          if (startIndex < 0) {
             throw new Error(`Start sequence key ${flags.start} not found in ${filePath}`)
           }
           sequenceToRun = sequenceDef.splice(startIndex)
-        }else{
+        } else {
           sequenceToRun = sequenceDef
         }
-        for(let step of sequenceToRun){
-          if(! _.isFunction(sequence[step]) ){
-            return this.log(`${step} is not function in ${filePath}`)
+
+        const tasks = new Listr(sequenceToRun.map(step => {
+          return {
+            title: step,
+            task: async () => {
+              lastReturnValue = await sequence[step](lastReturnValue)
+              return lastReturnValue
+            }
           }
-          this.log(`Attempt to executed: ${step}`)
-          lastReturnValue = await sequence[step](lastReturnValue)
-          this.log(`Executed: ${step}`)
-        }
+        }));
 
-        this.log('Sequence completed')
-
+        await tasks.run()
         break;
       default:
         this.log(SequenceCommand.description)
@@ -83,7 +85,7 @@ SequenceCommand.description = `Describe the command here
 Extra documentation goes here
 `
 
-SequenceCommand.flags={
+SequenceCommand.flags = {
   config: flags.string(),
   start: flags.string()
 }
