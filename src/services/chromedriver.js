@@ -2,6 +2,7 @@ const { Builder, WebDriver } = require('selenium-webdriver');
 const chromedriverExec = require('chromedriver');
 const chromeDriver = require('selenium-webdriver/chrome');
 const Http = require( 'selenium-webdriver/http');
+var path = require('path');
 
 const pm2 = require('pm2');
 
@@ -39,8 +40,13 @@ const stopChromeDriver = () => new Promise((resolve, reject) => {
     });
 })
 
-const startNewSession = async () => {
+const startNewSession = async (freshSession) => {
     let options = new chromeDriver.Options();
+
+    if(!freshSession){
+        const userProfileWindwos = path.resolve('./lisef/chromeProfile/') 
+        options.addArguments(`user-data-dir=${userProfileWindwos}`);
+    }
 
     options.addArguments('start-maximized');
     // options.setUserPreferences({ 'download.default_directory': opt.downloadFolder || path.resolve("./tmp") });
