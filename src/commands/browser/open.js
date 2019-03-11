@@ -1,5 +1,5 @@
 const { Command, flags } = require('@oclif/command')
-const { startChromeDriver, startNewSession, getSessionId } = require('../../services/chromedriver')
+const { getDriver } = require('../../services/chromedriver')
 const storage = require('../../services/storage')
 
 class BrowserOpenCommand extends Command {
@@ -7,10 +7,8 @@ class BrowserOpenCommand extends Command {
     const { flags } = this.parse(BrowserOpenCommand)
 
     try {
-      await startChromeDriver()
-      const driver = await startNewSession(flags.freshSession)
-      const sessionId = await getSessionId(driver)
-      storage.set('settings.sessionId', sessionId).write()
+      await getDriver(storage, flags.freshSession)
+      
     } catch (e) {
       this.log('Error', e)
     }

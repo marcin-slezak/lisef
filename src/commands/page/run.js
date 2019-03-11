@@ -3,7 +3,6 @@ var fs = require('fs');
 var path = require('path');
 const util = require('util')
 const fileExist = util.promisify(fs.exists)
-const storage = require('../../services/storage')
 const {getDriver} = require('../../services/chromedriver')
 const getConfig = require('../../services/config')
 
@@ -23,7 +22,8 @@ class PageRunCommand extends Command {
       return this.log(`File ${filePath} not found`)
     }
 
-    const driver = await getDriver(storage)
+    const driver = await getDriver()
+    
     try{
       const pageObjectClass = require(filePath)
       const pageObject = new pageObjectClass(driver, ctx)

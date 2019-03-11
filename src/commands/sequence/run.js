@@ -1,7 +1,7 @@
 const { Command, flags } = require('@oclif/command')
 const fs = require('fs');
 const path = require('path');
-const storage = require('../../services/storage')
+
 const util = require('util')
 const fileExist = util.promisify(fs.exists)
 const { getDriver } = require('../../services/chromedriver')
@@ -24,7 +24,7 @@ class SequenceRunCommand extends Command {
 
     const ctx = await getConfig(flags.config);
 
-    const driver = await getDriver(storage)
+    const driver = await getDriver()
 
     const sequenceClass = require(filePath)
     const sequence = new sequenceClass(driver, ctx)
