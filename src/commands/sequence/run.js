@@ -24,7 +24,7 @@ class SequenceRunCommand extends Command {
 
     const ctx = await getConfig(flags.config);
 
-    const driver = await getDriver()
+    const driver = await getDriver(flags.freshSession)
 
     const sequenceClass = require(filePath)
     const sequence = new sequenceClass(driver, ctx)
@@ -66,7 +66,8 @@ lisef sequence:run <sequenceName> --config <configName> --start <startStep>
 
 SequenceRunCommand.flags = {
   config: flags.string(),
-  start: flags.string()
+  start: flags.string(),
+  freshSession: flags.boolean({ default: false })
 }
 
 SequenceRunCommand.aliases = ['sequence:list']

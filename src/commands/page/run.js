@@ -22,7 +22,7 @@ class PageRunCommand extends Command {
       return this.log(`File ${filePath} not found`)
     }
 
-    const driver = await getDriver()
+    const driver = await getDriver(flags.freshSession)
     
     try{
       const pageObjectClass = require(filePath)
@@ -45,7 +45,8 @@ lisef page:run <pageObjectName/methodName> --config <configName>
 `
 
 PageRunCommand.flags={
-  config: flags.string()
+  config: flags.string(),
+  freshSession: flags.boolean({ default: false })
 }
 
 PageRunCommand.args = [
