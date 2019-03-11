@@ -3,7 +3,7 @@ const { stopChromeDriver } = require('../../services/chromedriver')
 
 class BrowserCloseCommand extends Command {
   async run() {
-    this.log('close', await stopChromeDriver())
+    await stopChromeDriver()
   }
 }
 

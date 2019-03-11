@@ -7,10 +7,9 @@ class BrowserOpenCommand extends Command {
     const { flags } = this.parse(BrowserOpenCommand)
 
     try {
-      this.log('open', await startChromeDriver())
+      await startChromeDriver()
       const driver = await startNewSession(flags.freshSession)
       const sessionId = await getSessionId(driver)
-      console.log('session', sessionId)
       storage.set('settings.sessionId', sessionId).write()
     } catch (e) {
       this.log('Error', e)
